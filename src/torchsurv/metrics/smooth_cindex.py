@@ -223,24 +223,27 @@ class SmoothConcordanceIndex:
                 event_i
             ), f"Got censored sample at index {order[ind]}, but expected uncensored"
 
+            """
             # Identify tied pairs based on a tolerance (ties)
             ties = (
                 torch.absolute(est_j.float() - est_i.float()) <= self.tied_tol
             )  # ties
             n_ties = ties.sum()
-
+            """
+            
             # Identify concordant pairs
-            con = est_j < est_i
-            n_con = torch.sigmoid((est_i - est_j)/self.sigma)[~ties].sum()
+            # con = est_j < est_i
+            n_con = torch.sigmoid((est_i - est_j)/self.sigma).sum()
 
             # Update numerator and denominator for concordance index calculation
-            numerator += w_i * n_con + 0.5 * w_i * n_ties
+            # numerator += w_i * n_con + 0.5 * w_i * n_ties
+            numerator += w_i * n_con
             denominator += w_i * n
 
             # Update counts for tied, concordant, and discordant pairs
-            tied_risk.append(w_i * n_ties)
-            concordant.append(w_i * n_con)
-            discordant.append(w_i * n - w_i * n_con - w_i * n_ties)
+            # tied_risk.append(w_i * n_ties)
+            # concordant.append(w_i * n_con)
+            # discordant.append(w_i * n - w_i * n_con - w_i * n_ties)
 
         # Create/overwrite internal attributes states
         if instate:
